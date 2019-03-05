@@ -34,6 +34,8 @@ ARCHITECTURE rtl OF timer_counter IS
 SIGNAL counter_value_s   : STD_LOGIC_VECTOR(7 DOWNTO 0);
 SIGNAL counter_for_min_s : STD_LOGIC_VECTOR(7 DOWNTO 0);
 SIGNAL counter_for_h_s   : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL one_min_i : STD_LOGIC;
+SIGNAL one_h_i   : STD_LOGIC;
 begin
 
 -- DODATI :
@@ -71,8 +73,8 @@ begin
 			if(cnt_rst_i = '1') then
 				counter_for_min_s <= (others => '0');
 			elsif(cnt_en_i = '1') then
-				if(counter_value_s = 59) then
-					if(counter_for_min_s = 59) then
+				if(one_min_i = '1') then
+					if(one_h_i = '1') then
 						counter_for_min_s <= (others => '0');
 					else
 						counter_for_min_s <= counter_for_min_s + 1;
@@ -91,7 +93,7 @@ begin
 			if(cnt_rst_i = '1') then
 				counter_for_h_s <= (others => '0');
 			elsif(cnt_en_i = '1') then
-				if(counter_for_min_s = 59) then
+				if(one_h_i = '1') then
 					if(counter_for_h_s = 23) then
 						counter_for_h_s <= (others => '0');
 					else
@@ -113,5 +115,8 @@ begin
 			led_o <= counter_value_s;
 		end if;
 	end process;
+	
+	one_min_i <= '1' when counter_value_s   = 59 else '0';
+	one_h_i   <= '1' when counter_for_min_s = 59 else '0';
 	
 END rtl;
